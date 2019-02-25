@@ -1,0 +1,138 @@
+<?php
+
+class users extends CI_Controller
+{
+	function __construct()
+	{
+		parent::__construct();
+		$this->load->model('login_model','lm');
+	}
+	
+	public function index()
+	{
+		  $this->form_validation->set_rules('uname','User Name','required|alpha');
+		  $this->form_validation->set_rules('pass','Password','required|max_length[12]');
+		$this->form_validation->set_error_delimiters('<div class="text-danger">', '</div>');
+		  if($this->form_validation->run())
+		  {
+			   $uname=$this->input->post('uname');
+			   $pass=$this->input->post('pass');
+			   
+			   $login_id=$this->lm->login($uname,$pass);
+			   if($login_id)
+			   {	
+			       $this->session->set_userdata('id',$login_id);
+			       return redirect('users/welcome');
+			  	}
+
+			   else
+			   {
+			      $this->session->set_flashdata('msg','Invalid Username/Password');
+			      return redirect('users');
+			   }
+		  }
+		  else
+		 {
+		 $this->load->view('admin/login_view');
+		 }
+ 	}
+
+ 	function signup()
+ 	{
+ 		$this->load->view('admin/signup');
+ 	}
+ 	function register()
+ 	{
+ 		$data = $this->input->post();
+ 		if ($this->lm->register($data)) 
+ 		{
+ 		 	$this->session->set_userdata('Successfully');
+			return redirect('users/signup');
+ 		 } else
+ 		echo "Error";
+ 	}
+
+	 function welcome()
+	 {
+	 	$data['gym'] = $this->lm->display_all();
+		$this->load->view('admin/welcome',$data);
+	}
+	 function adduser()
+	 {
+	 	$this->load->view('admin/adduser');
+	 }
+
+	 function insert()
+	 {
+	 	$data = $this->input->post();
+	 	$send = $this->lm->adduser($data);
+	 	
+	 		if ($send) {
+			$this->session->set_flashdata('msg','Inserted Successfully');
+          $this->session->set_flashdata('msg_class','alert-success');
+			return redirect('users/welcome'); 
+		}
+	 }
+
+	 function details($id)
+	 {
+	 	$data['gym'] = $this->lm->details($id);
+		$this->load->view('admin/details',$data);
+	 }
+
+	 function edit($id)
+	{
+		$data['edituser'] = $this->lm->edit($id);
+		$this->load->view('admin/edit',$data);
+	}
+
+	function update()
+	{	
+		
+		$result = $this->lm->update($post);
+
+		if($result)
+		{
+			$this->session->set_flashdata('msg','Updated Successfully');
+          $this->session->set_flashdata('msg_class','alert-success');
+			return redirect('users/welcome'); 
+			/*echo "Success";*/
+		}else
+		{
+			echo "Failed";
+		}
+		return redirect('users/welcome');
+	}
+
+	function delete($id)
+	{
+		$record = $this->lm->delete($id);
+		if($record)
+		{ 
+			$this->session->set_flashdata('msg','Delete Successfully');
+          $this->session->set_flashdata('msg_class','alert-success');
+			return redirect('users/welcome'); 
+		}else
+		{	
+			echo "Failed To delete";			
+		}
+	}
+
+
+
+
+ public function logout()
+  {
+    $this->session->unset_userdata('id');
+    return redirect('users');
+  }
+
+
+
+
+
+} ?>
+
+
+
+
