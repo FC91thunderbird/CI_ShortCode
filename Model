@@ -1,0 +1,100 @@
+<?php
+
+class login_model extends CI_Model
+{
+	
+	function login($username,$password)
+	{
+		$q=$this->db->where(['uname'=>$username,'password'=>$password])
+               ->get('auth');
+              
+   //select * from users where username=$username and password=$password
+        
+           if($q->num_rows())     
+           {
+           return $q->row()->id;
+           }   
+           else
+           {
+           	return false;
+           }
+		
+	}
+	function register($data)
+	{
+		return $this->db->insert('auth',$data);
+	}
+
+	function adduser($data)
+	{
+		return $this->db->insert('member',$data);
+	}
+
+	function display_all()
+	{
+		$this->db->order_by('id','desc');
+		$query = $this->db->get('member');
+		return $query->result();
+	}
+
+	function details($id)
+	{
+		$this->db->where('id',$id);
+		$query = $this->db->get('member');
+		if($query->num_rows() > 0)
+		{
+			return $query->row();
+		}
+	}
+
+	function edit($id)
+	{
+		$this->db->where('id',$id);
+		$query = $this->db->get('member');
+		if($query->num_rows() > 0)
+		{
+			return $query->row();
+			return redirect('users/welcome'); 
+		}
+	}
+
+	function update()
+	{
+    	$id = $this->input->post('hidden_id');
+    	$field = array(
+			'fname' => $this->input->post('fname'),
+			'mname' => $this->input->post('mname'),
+			'lname' => $this->input->post('lname'),
+			'gender' => $this->input->post('gender'),
+			'address' => $this->input->post('address'),
+			'area' => $this->input->post('area'),
+			'telephone' => $this->input->post('telephone'),
+			'updated' => $this->input->post('updated')
+			 );
+
+		$this->db->where('id',$id);
+		$this->db->update('member',$field);
+		if($this->db->affected_rows() > 0)
+		{
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	function delete($id)
+	{
+		$this->db->where('id', $id);
+        $this->db->delete('member');
+        if ($this->db->affected_rows() > 0) 
+        {
+            return true;
+
+        } else {
+            return false;
+        }
+	}
+
+
+
+} ?>
