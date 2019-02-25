@@ -1,0 +1,335 @@
+//Model View
+  
+  function model()
+  {
+  	$fetch['gym'] = $this->lm->model();
+	$this->load->view('model/index',$fetch);
+  }
+
+  function addmodel()
+  {
+  		$data = $this->input->post();
+	 	$send = $this->lm->addmodel($data);
+	 	
+	 		if ($send) {
+			$this->session->set_flashdata('msg','Inserted Successfully');
+          $this->session->set_flashdata('msg_class','alert-success');
+			return redirect('users/model'); 
+		}
+  }
+
+
+  function modelupdate()
+  {
+  	$result = $this->lm->modelupdate($post);
+
+		if($result)
+		{
+			$this->session->set_flashdata('msg','Updated Successfully');
+          $this->session->set_flashdata('msg_class','alert-success');
+			return redirect('users/model'); 
+			/*echo "Success";*/
+		}else
+		{
+			echo "Failed";
+		}
+		return redirect('users/model');
+  }
+
+  function modeldelete()
+  {
+  		$record = $this->lm->modeldelete($id);
+		if($record)
+		{ 
+			$this->session->set_flashdata('msg','Delete Successfully');
+          $this->session->set_flashdata('msg_class','alert-success');
+			return redirect('users/model'); 
+		}else
+		{	
+			echo "Failed To delete";			
+		}
+  }
+  
+?> // Close Controller
+
+
+//Model
+function model()
+	{
+		$this->db->order_by('id','desc');
+		$query = $this->db->get('member');
+		return $query->result();	
+	}
+
+	function addmodel($data)
+	{
+		return $this->db->insert('member',$data);
+	}
+
+
+	function modelupdate()
+	{
+		$id = $this->input->post('hidden_id');
+    	$field = array(
+			'fname' => $this->input->post('fname'),
+			'mname' => $this->input->post('mname'),
+			'lname' => $this->input->post('lname'),
+			'gender' => $this->input->post('gender'),
+			'address' => $this->input->post('address'),
+			'area' => $this->input->post('area'),
+			'telephone' => $this->input->post('telephone'),
+			'updated' => $this->input->post('updated')
+			 );
+
+		$this->db->where('id',$id);
+		$this->db->update('member',$field);
+		if($this->db->affected_rows() > 0)
+		{
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	function modeldelete()
+	{
+		$id = $this->input->post('hidden_id');
+		
+		$this->db->where('id', $id);
+        $this->db->delete('member');
+        if ($this->db->affected_rows() > 0) 
+        {
+            return true;
+
+        } else {
+            return false;
+        }
+	}
+
+//Close Model
+
+// Main View
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+    // show the alert
+    setTimeout(function() {
+        $(".alert").alert('close');
+    }, 2000);
+});
+</script>
+
+
+<div class="container" style="padding-top: 5%">
+	
+<?php  
+if($msg = $this->session->flashdata('msg')): 
+    $msg_class = $this->session->flashdata('msg_class')
+?>
+<div class="alert alert-warning <?= $msg_class ?>">
+    <?= $msg; ?>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<?php endif; ?>
+		
+		<span class="pull-left"><a href="#amol" data-toggle="modal" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add New</a></span>
+		<div style="height:50px;"></div>
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+				<th>Firstname</th>
+				<th>Lastname</th>
+				<th>Address</th>
+				<th>Action</th>
+			</thead>
+			<tbody>
+		<?php
+	foreach ($gym as $row) 
+	{ ?>
+					<tr>
+						<td><?=  $row->fname; ?></td>
+						<td><?=  $row->mname; ?></td>
+						<td><?=  $row->address; ?></td>
+						<td>
+							<!-- <a href="#edit<?= $row->id; ?>">edit</a>  --> <a href="#edit<?= $row->id; ?>" data-toggle="modal"> edit6</a> | <a href="#delete<?= $row->id; ?>" data-toggle="modal">Delete</a>
+							</td>
+
+
+
+				
+<!-- /.modal -->
+	
+<!-- Delete -->
+   <div class="modal fade" id="delete<?= $row->id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="<?php echo base_url()?>users/modeldelete">
+					<div class="row">
+						<input type="hidden" name="hidden_id" value="<?=  $row->id; ?>">
+						<div class="col-lg-2">
+							<label style="position:relative; top:7px;">ID:</label>
+						</div>
+						<div class="col-lg-10">
+							<input type="text" disabled class="form-control" value="<?=  $row->id; ?>">
+						</div>
+					</div>
+					<div style="height:10px;"></div>
+					<div class="row">
+						<div class="col-lg-2">
+							<label style="position:relative; top:7px;">Fname:</label>
+						</div>
+						<div class="col-lg-10">
+							<input type="text" name="fname" class="form-control" value="<?=  $row->fname; ?>">
+						</div>
+					</div>
+					
+
+    
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Delete Record</button>
+      </div>
+      </form>
+  </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Edit Modal -->
+
+
+<div class="modal fade" id="edit<?= $row->id; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="<?php echo base_url() ?>users/modelupdate">
+					<div class="row">
+						<input type="hidden" name="hidden_id" value="<?=  $row->id; ?>">
+						<div class="col-lg-2">
+							<label style="position:relative; top:7px;">fname:</label>
+						</div>
+						<div class="col-lg-10">
+							<input type="text" name="fname" class="form-control" value="<?=  $row->fname; ?>">
+						</div>
+					</div>
+					<div style="height:10px;"></div>
+					<div class="row">
+						<div class="col-lg-2">
+							<label style="position:relative; top:7px;">Lastname:</label>
+						</div>
+						<div class="col-lg-10">
+							<input type="text" name="mname" class="form-control" value="<?=  $row->mname; ?>">
+						</div>
+					</div>
+					<div style="height:10px;"></div>
+					<div class="row">
+						<div class="col-lg-2">
+							<label style="position:relative; top:7px;">lname:</label>
+						</div>
+						<div class="col-lg-10">
+							<input type="text" name="lname" class="form-control" value="<?=  $row->lname; ?>">
+						</div>
+					</div>
+
+    
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+      </div>
+      </form>
+  </div>
+    </div>
+  </div>
+</div>
+
+
+
+			
+
+
+				
+						</tr>
+				<?php }?>
+			</tbody>
+		</table>
+					
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="amol" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <form method="POST" action="<?php echo base_url() ?>users/addmodel">
+					<div class="row">
+						
+						<div class="col-lg-2">
+							<label style="position:relative; top:7px;">Firstname:</label>
+						</div>
+						<div class="col-lg-10">
+							<input type="text" name="fname" class="form-control" required>
+						</div>
+					</div>
+					<div style="height:10px;"></div>
+					<div class="row">
+						<div class="col-lg-2">
+							<label style="position:relative; top:7px;">middle:</label>
+						</div>
+						<div class="col-lg-10">
+							<input type="text" name="mname" class="form-control" required>
+						</div>
+					</div>
+					<div style="height:10px;"></div>
+					<div class="row">
+						<div class="col-lg-2">
+							<label style="position:relative; top:7px;">lname:</label>
+						</div>
+						<div class="col-lg-10">
+							<input type="text" name="lname" class="form-control">
+						</div>
+					</div>
+
+    
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Insert</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
