@@ -1,0 +1,36 @@
+// inner page
+
+
+<?php  
+if($msg = $this->session->flashdata('msg')): 
+    $msg_class = $this->session->flashdata('msg_class')
+?>
+<div class="alert alert-warning <?= $msg_class ?>">
+    <?= $msg; ?>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<?php endif; ?>
+
+
+// fetch record
+
+<tbody>
+    <?php
+	foreach ($gym as $gm) 
+	{ ?>
+    <tr>
+      <tr>
+		      <th scope="row"><?php echo $gm->id; ?></th>
+		      <td><?php echo $gm->fname." ". $gm->mname." ".$gm->lname; ?></td>
+		     
+		      <td><?php echo $gm->address; ?></td>
+		      <td><?php echo $gm->area; ?></td>
+		      <td><?php echo $gm->gender; ?></td>
+		      <td>
+		      	<a href="<?php echo base_url('users/details/'.$gm->id); ?>">Details</a> | <a href="<?php echo base_url('users/edit/'.$gm->id); ?>">Edit</a> | <a href="<?php echo base_url('users/delete/'.$gm->id); ?>">Delete</a>
+		      </td>
+						      
+    </tr>
+<?php }?>
