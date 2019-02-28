@@ -1,0 +1,118 @@
+<?php
+// Function.php
+@session_start();
+
+	$db_username = 'root';
+	$db_password = '';
+	$conn = new PDO( 'mysql:host=localhost;dbname=ajax', $db_username, $db_password );
+	if(!$conn){
+		die("Fatal Error: Connection Failed!");
+	}
+
+if (isset($_POST['login'])) {
+			$email = $_POST['email'];
+			$password = $_POST['password'];
+			$query = $conn->prepare("SELECT * FROM test WHERE email='$email' AND password='$password' ");
+			$query->execute();
+			$row = $query->rowCount();
+			$fetch1 = $query->fetch();
+
+
+			if($row > 0)
+			{
+				$_SESSION['id'] = $fetch1['id'];
+				$_SESSION['user'] = $fetch1['username'];
+				header("location: home.php");
+			}else{
+				echo "<script>alert('Wrong Username & password') </script>
+				<script>window.location= 'index.php' </script>
+				";
+			}
+}
+
+
+// Register
+if (isset($_POST['signup'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $email = $_POST['email'];
+    
+    $uploaddir = 'images/';
+    $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
+        $filename= $uploaddir . $_FILES['userfile']['name'];
+         
+        if(move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+           echo "Added Success";
+        } else {
+            echo "Possible file upload attack!\n";
+        }
+
+
+
+    $check = $conn->prepare("SELECT * from test where email='$email' ");
+           $check->execute();
+           $row = $check->rowCount();
+           
+            if ($row > 0) {
+                echo "<script>alert(' Allready Exist !!')</script>";
+            }else{
+
+            $sql = $conn->prepare( "INSERT INTO test (username, password, email, image)
+                VALUES ('$username', '$password','$email','$filename')");
+
+
+                if ( $sql->execute()) {
+                    echo "<script>alert('User Register successfully')</script>";
+                    echo "<script> location.href='index.php' </script>"; 
+                    
+                } else {
+                    
+                    echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+                }
+            } 
+
+
+}
+
+if (isset($_POST['Edit1'])) {
+	$username = $_POST['username'];
+    $password = $_POST['password'];
+    $email = $_POST['email'];
+   $id=$_GET['id'];
+
+    $sql = $conn->prepare( "update test set username='$username' , password='$password' , email='$email' where id='$id' ");
+        
+
+
+        if ( $sql->execute()) {
+            echo "<script>alert('Update successfully')</script>";
+            echo "<script> location.href='home.php' </script>"; 
+            
+        } else {
+            
+           echo "string";
+        }
+} 
+
+
+if (isset($_POST['delete'])) {
+	$id=$_GET['del'];
+	$del = $conn->prepare("delete from  test where id ='$id' ");
+	
+
+	if ( $del->execute()) {
+            echo "<script>alert('delete successfully')</script>";
+            echo "<script> location.href='tables.php' </script>"; 
+            
+        } else {
+            
+           echo "string";
+        }
+}
+?>
+
+
+
+
+
+	
