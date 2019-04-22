@@ -1,0 +1,252 @@
+
+* <title><?php bloginfo( 'name' ); ?></title>
+
+* <link href="<?php bloginfo('template_url'); ?>/assets/css/font-awesome.css" rel="stylesheet">
+
+* <?php wp_head(); ?>
+
+  </head>
+  <body <?php body_class(); ?>> 
+
+ * //// Category Dropdown  //////
+
+ <?php
+    $args = array(
+      //'number'     => $number,
+      'orderby'    => 'title',
+      'order'      => 'ASC',
+      'hide_empty' => 0,
+      'parent'  => 0
+      //'include'    => $ids
+    );
+    $product_categories = get_terms( 'product_cat', $args );
+    $count = count($product_categories);
+    if ( $count > 0 ){
+        foreach ( $product_categories as $product_category ) {
+          $cat_id   = $product_category->term_id;
+          $cat_link = get_category_link( $cat_id );
+          if ($product_category->category_parent == 0) { ?>
+
+      <li><a href="<?php echo esc_url(get_term_link( $product_category ) ); ?>"><?php
+      }
+        echo esc_html( $product_category->name ); ?></a></li>
+
+         <?php
+        }
+      }
+  ?>
+
+
+ * ////// Logo
+
+  <?php if( has_custom_logo() ){ the_custom_logo();
+   }else{ ?>
+  <h1><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
+  <?php $description = get_bloginfo( 'description', 'display' );
+  if ( $description || is_customize_preview() ) : ?> 
+    <p class="site-description"><?php echo esc_html($description); ?></p>
+<?php endif; }?>
+
+
+* CART URL => <?php if(function_exists('wc_get_cart_url')){ echo esc_url(wc_get_cart_url()); } ?>
+
+* Count=> <?php echo wp_kses_data( WC()->cart->get_cart_contents_count() );?>
+
+* ////////  Menu //////
+<?php wp_nav_menu( 
+array( 
+  'sort_column' => 'menu_order', 
+  'menu_class' => 'nav navbar-nav' ) ); ?>
+
+
+
+* <?php wp_footer(); ?>
+
+* 
+<?php
+/* Template Name: Example Template */
+?>
+<?php while ( have_posts() ) : the_post(); //Open the loop ?>
+<?php the_content(); ?>
+<?php endwhile; // End the loop. ?>
+
+
+
+* style.css
+<?php
+
+/*
+Theme Name: Self Made Theme
+Theme URI: Your Theme's URI
+Description: A brief description.
+Version: 1.0
+Author: You
+Author URI: Your website address.
+*/
+
+
+
+
+///////////////////   Function.php   ///////////////
+<?php
+
+
+function customize_list(){
+register_nav_menus(
+			array(
+				'menu-1' => __( 'Primary', 'twentynineteen' ),
+				'footer' => __( 'Footer Menu', 'twentynineteen' ),
+				'social' => __( 'Social Links Menu', 'twentynineteen' ),
+			)
+		);
+
+  register_nav_menus(
+    array(
+      'new-menu' => __( 'New Menu' ),
+      'another-menu' => __( 'Another Menu' ),
+      'an-extra-menu' => __( 'An Extra Menu' )
+    )
+  );
+
+
+add_theme_support(
+			'custom-logo',
+			array(
+				'height'      => 100,
+				'width'       => 300,
+				'flex-width'  => false,
+				'flex-height' => false,
+			)
+		);   
+}
+
+add_action( 'after_setup_theme', 'customize_list' );
+
+
+
+function wpdocs_theme_name_scripts() {
+    wp_enqueue_style( 'style', get_stylesheet_uri() );
+  /*  wp_enqueue_script( 'script-name', get_template_directory_uri() . '/js/example.js', array(), '1.0.0', true );*/
+}
+add_action( 'wp_enqueue_scripts', 'wpdocs_theme_name_scripts' );
+
+
+function supermarket_ecommerce_widgets_init() {
+	register_sidebar( array(
+		'name'          => __( 'Blog Sidebar', 'supermarket-ecommerce' ),
+		'id'            => 'sidebar-1',
+		'description'   => __( 'Add widgets here to appear in your sidebar on blog posts and archive pages.', 'supermarket-ecommerce' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<div class="widget_container"><h2 class="widget-title">',
+		'after_title'   => '</h2></div>',
+	) );
+
+	register_sidebar( array(
+		'name'          => __( 'Sidebar 2', 'supermarket-ecommerce' ),
+		'id'            => 'sidebar-2',
+		'description'   => __( 'Add widgets here to appear in your pages and posts', 'supermarket-ecommerce' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<div class="widget_container"><h2 class="widget-title">',
+		'after_title'   => '</h2></div>',
+	) );
+
+	register_sidebar( array(
+		'name'          => __( 'Sidebar 3', 'supermarket-ecommerce' ),
+		'id'            => 'sidebar-3',
+		'description'   => __( 'Add widgets here to appear in your pages and posts', 'supermarket-ecommerce' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<div class="widget_container"><h2 class="widget-title">',
+		'after_title'   => '</h2></div>',
+	) );
+
+	register_sidebar( array(
+		'name'          => __( 'Footer 1', 'supermarket-ecommerce' ),
+		'id'            => 'footer-1',
+		'description'   => __( 'Add widgets here to appear in your footer.', 'supermarket-ecommerce' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+
+	register_sidebar( array(
+		'name'          => __( 'Footer 2', 'supermarket-ecommerce' ),
+		'id'            => 'footer-2',
+		'description'   => __( 'Add widgets here to appear in your footer.', 'supermarket-ecommerce' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+
+	register_sidebar( array(
+		'name'          => __( 'Footer 3', 'supermarket-ecommerce' ),
+		'id'            => 'footer-3',
+		'description'   => __( 'Add widgets here to appear in your footer.', 'supermarket-ecommerce' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+
+	register_sidebar( array(
+		'name'          => __( 'Footer 4', 'supermarket-ecommerce' ),
+		'id'            => 'footer-4',
+		'description'   => __( 'Add widgets here to appear in your footer.', 'supermarket-ecommerce' ),
+		'before_widget' => '<section id="%1$s" class="widget %2$s">',
+		'after_widget'  => '</section>',
+		'before_title'  => '<h2 class="widget-title">',
+		'after_title'   => '</h2>',
+	) );
+
+}
+add_action( 'widgets_init', 'supermarket_ecommerce_widgets_init' );
+
+
+
+
+/////////////// End Function ///////////
+
+
+
+
+
+
+
+<?php
+/**
+ * Template Name: Elementor Pagebuilder
+ */
+get_header(); 
+    if ( have_posts() ) :
+        while ( have_posts() ) : the_post();
+            the_content();
+        endwhile;
+    endif; 
+get_footer();
+
+
+////////////////////   Blog Post   ///////// 
+
+<article id="post-<?php the_ID(); ?>" <?php post_class(); ?> >
+    <div class="blog-list">
+        <div class="post-thumbnail">
+			<?php the_post_thumbnail(); ?>
+		</div><!-- .post-thumbnail -->
+        <div class="blog-detail">
+            <?php the_title( '<h4 class="text-uppercase" itemprop="headline">', '</h4>' ); ?>
+            <div class="text-left" itemprop="articleBody">
+                <?php the_content(); ?>
+            </div>
+            
+        </div>
+    </div>
+</article><!-- #post-<?php the_ID(); ?> --> 
+
+
+
+////////////  Extra  //////
+get_template_part( 'no-results' );
