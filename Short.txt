@@ -10,3 +10,61 @@ Multi-auth guard = https://techvblogs.com/blog/multiple-authentication-guards-la
 https://medium.com/@kamerk22/the-smart-way-to-handle-request-validation-in-laravel-5e8886279271
 
 https://www.itsolutionstuff.com/post/laravel-8-user-roles-and-permissions-tutorialexample.html
+
+
+Laravel Study:
+Route:
+	1. Match & Any
+		Route::match(['get', 'post'], '/', function () {});
+		Route::any('/', function () {});	
+
+	2. Callback method
+		Route::get('/users', function (Request $request) {});
+
+	3. Redirect
+		Route::redirect('/here', '/there');
+
+	4. View 
+		Route::view('/welcome', 'welcome', ['name' => 'Taylor']);
+
+	5. List
+		php artisan route:list
+
+	6. Route Parameter
+		Route::get('/posts/{post}/comments/{comment}', function ($postId, $commentId) {
+		    return 'User '.$postId .$commentId;
+		});
+
+	7. Optional
+		Route::get('/user/{name?}', function ($name = null) {
+		    return $name;
+		});
+
+	8. Regular Expression
+		Route::get('/user/{id}/{name}', function ($id, $name) {
+		    //
+		})->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
+
+		OR
+		Route::get('/user/{name}', function ($name) {
+		    //
+		})->whereAlphaNumeric('name');
+
+	9. Named Route
+		Route::get('/user/profile',[UserProfileController::class, 'show'])->name('profile');
+
+	10. Middleware
+		Route::middleware(['first', 'second'])->group(function () {
+		    Route::get('/', function () {
+		        // Uses first & second middleware...
+		    });
+		)};
+
+	11. Controllers
+			Route::controller(OrderController::class)->group(function () {
+			    Route::get('/orders/{id}', 'show');
+			    Route::post('/orders', 'store');
+			});
+
+	12. prefix
+
