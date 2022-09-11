@@ -1,0 +1,12 @@
+Links
+MultiAuth = https://www.tutsmake.com/laravel-9-multi-user-authentication-example/
+
+API = https://www.itsolutionstuff.com/post/laravel-9-rest-api-with-passport-authentication-tutorialexample.html
+
+techvblogs.com
+Multi-auth guard = https://techvblogs.com/blog/multiple-authentication-guards-laravel-9
+
+
+https://medium.com/@kamerk22/the-smart-way-to-handle-request-validation-in-laravel-5e8886279271
+
+https://www.itsolutionstuff.com/post/laravel-8-user-roles-and-permissions-tutorialexample.html
